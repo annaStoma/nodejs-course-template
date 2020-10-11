@@ -112,11 +112,11 @@ const deleteTask = async (boardId, taskId) => {
     const indexOfTasks = TasksDB.findIndex(e => e.id === taskId);
     if (indexOfTasks >= 0) {
       TasksDB.splice(indexOfTasks, 1);
-      return { error: 0 };
+      return;
     }
-    return { error: 1 };
+    return new Error(`task with id ${taskId} was not found`);
   } catch (err) {
-    return { error: 255 };
+    return new Error(`task with id ${taskId} was not found`);
   }
 };
 
