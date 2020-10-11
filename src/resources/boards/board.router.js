@@ -40,7 +40,7 @@ router.route('/:id').delete(async (req, res) => {
     await boardsService.del(req.params.id);
     res.status(200).send('OK');
   } catch (err) {
-    res.status(404).send('Board not found');
+    res.status(404).send('Not found');
   }
 });
 

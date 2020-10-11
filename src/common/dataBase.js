@@ -8,7 +8,7 @@ DB.push(new User(), new User(), new User());
 const BoardDB = [];
 BoardDB.push(new Board(), new Board());
 
-const TasksDB = [];
+let TasksDB = [];
 
 // сделать мапу
 // ------------- users ----------------
@@ -34,16 +34,11 @@ const updateUser = async user => {
 };
 
 const deleteUser = async id => {
-  try {
-    const indexOfUser = DB.findIndex(e => e.id === id);
-    if (indexOfUser >= 0) {
-      DB.splice(indexOfUser, 1);
-      return { error: 0 };
-    }
-    return { error: 1 };
-  } catch (err) {
-    return { error: 255 };
-  }
+  const indexOfUser = DB.findIndex(user => user.id === id);
+  DB.splice(indexOfUser, 1);
+  TasksDB.map(task => {
+    if (task.userId === id) task.userId = null;
+  });
 };
 
 // ------------- boards ----------------
@@ -72,22 +67,18 @@ const updateBoard = async board => {
 };
 
 const deleteBoard = async id => {
-  try {
-    const indexOfBoard = BoardDB.findIndex(e => e.id === id);
-    if (indexOfBoard >= 0) {
-      BoardDB.splice(indexOfBoard, 1);
-      return { error: 0 };
-    }
-    return { error: 1 };
-  } catch (err) {
-    return { error: 255 };
-  }
+  const indexBoardForDelete = BoardDB.findIndex(board => board.id === id);
+  BoardDB.splice(indexBoardForDelete, 1);
+  TasksDB = TasksDB.filter(task => task.boardId !== id);
 };
 
 // ------------- tasks ----------------
 const getAllTasks = async id => TasksDB.filter(task => task.boardId === id);
 
-const getTask = async id => TasksDB.slice().filter(task => task.id === id)[0];
+const getTask = async (boardId, taskId) =>
+  TasksDB.slice().filter(
+    task => task.id === taskId && task.boardId === boardId
+  )[0];
 
 const createTask = task => {
   TasksDB.push(task);
@@ -108,11 +99,7 @@ const updateTask = async (boardId, taskId, taskData) => {
   if (indexOfTask === null) {
     throw new Error(`task with id ${taskId} was not found`);
   }
-  TasksDB[indexOfTask] = {
-    ...TasksDB[indexOfTask],
-    ...taskData,
-    id: TasksDB[indexOfTask].id
-  };
+  TasksDB[indexOfTask] = { id: taskId, ...taskData };
   return TasksDB[indexOfTask];
 };
 

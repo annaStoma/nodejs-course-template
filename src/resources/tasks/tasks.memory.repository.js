@@ -2,10 +2,10 @@ const DB = require('../../common/dataBase');
 
 const getAll = async id => DB.getAllTasks(id);
 
-const get = async id => {
-  const task = await DB.getTask(id);
+const get = async (boardId, taskId) => {
+  const task = await DB.getTask(boardId, taskId);
   if (!task) {
-    throw new Error(`task with id ${id} was not found`);
+    throw new Error(`task with id ${boardId} and ${taskId} was not found`);
   }
   return task;
 };
